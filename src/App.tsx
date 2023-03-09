@@ -1,11 +1,14 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Button, ButtonGroup, Box } from "@chakra-ui/react";
+import { Todos } from "./components/Todos";
+import { useNavigate } from "react-router-dom";
 
-function App() {
+export const App = () => {
   const [count, setCount] = useState(0);
 
+  const navigate = useNavigate();
   return (
     <div className="App">
       <div>
@@ -28,8 +31,18 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <Box>
+        <Button
+          loadingText={""}
+          size={"md"}
+          variant={"solid"}
+          onClick={() => {
+            navigate("/todos");
+          }}
+        >
+          Go to Todos
+        </Button>
+      </Box>
     </div>
   );
-}
-
-export default App;
+};
