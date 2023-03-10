@@ -1,0 +1,15 @@
+.todosContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  text-align: left;
+  border-style: dotted;
+  border-radius: "md";
+  border-width: 10px;
+  border-color: red;
+}
+.todosContainer > * {
+  border-style: groove;
+  border-radius: "xl";
+  border-color: red;
+}
