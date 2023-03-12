@@ -41,6 +41,16 @@ export const Home = () => {
         >
           Go to Todos
         </Button>
+        <Button
+          loadingText={""}
+          size={"md"}
+          variant={"solid"}
+          onClick={() => {
+            navigate("/reactrouter");
+          }}
+        >
+          Go to ReactRouter
+        </Button>
       </Box>
     </>
   );

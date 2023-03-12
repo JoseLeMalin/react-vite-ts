@@ -8,7 +8,13 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
 import "./Todos.scss";
-import { useNavigate } from "react-router-dom";
+import {
+  Form,
+  isRouteErrorResponse,
+  useLoaderData,
+  useNavigate,
+  useRouteError,
+} from "react-router-dom";
 
 /**
  * Contains the list of actions done while starting this project
@@ -16,6 +22,9 @@ import { useNavigate } from "react-router-dom";
  */
 export const Todos = () => {
   const navigate = useNavigate();
+  const data = useLoaderData();
+
+  //console.log("data", data);
   return (
     <>
       <Container className="todosContainer">
@@ -69,7 +78,33 @@ export const Todos = () => {
           <Button colorScheme="teal" size="lg" onClick={() => navigate("/")}>
             HomePage
           </Button>
+          <Form method="post" action="/todos/:query">
+            <input name="songTitle" />
+            <textarea name="lyrics" />
+            <button type="submit">Save</button>
+          </Form>
+          <Button
+            colorScheme="teal"
+            size="lg"
+            onClick={() => navigate("/todos/:query")}
+          >
+            TodosQuery
+          </Button>
         </div>
+      </Container>
+    </>
+  );
+};
+
+export const TodosBis = () => {
+  const navigate = useNavigate();
+  const data = useLoaderData();
+
+  console.log("dataBis", data);
+  return (
+    <>
+      <Container className="todosContainerBis">
+        <h1>Test Chlidren de children</h1>
       </Container>
     </>
   );
