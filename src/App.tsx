@@ -5,7 +5,10 @@ import { Button, Box } from "@chakra-ui/react";
 import { RouterProvider, useLoaderData, useNavigate } from "react-router-dom";
 import { Appbar } from "./components/shared/appbar/Appbar";
 import { Layout, router } from "./components/shared/routes";
+import { NavBar } from "./components/navbar/navbar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 function App() {
   const [count, setCount] = useState(0);
 
@@ -13,10 +16,12 @@ function App() {
   const data = useLoaderData();
   return (
     <>
-      <div className="App">
-        <Appbar />
-        <Layout />
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <div className="App">
+          {/* <Appbar /> */}
+          <Layout />
+        </div>
+      </QueryClientProvider>
     </>
   );
 }

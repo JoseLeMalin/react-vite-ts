@@ -11,34 +11,23 @@ import {
 } from "react-router-dom";
 import App from "../../App";
 import { Home } from "../home/home";
+import { NavBar } from "../navbar/navbar";
 import {
   ErrorRRComp,
   ReactRouterComp,
   ReactRouterGetters,
 } from "../reactrouter/reactrouter";
+import { TanStackQuery } from "../tanstack-query/tanstack-query";
 import { Todos, TodosBis } from "../Todos/Todos";
 
 export const Layout = () => {
   return (
-    <div>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/todos">Todos</Link>
-          </li>
-          <li>
-            <Link to="/nothing-here">Nothing Here</Link>
-          </li>
-        </ul>
-      </nav>
-
-      <hr />
-
-      <Outlet />
-    </div>
+    <>
+      <NavBar />
+      <div>
+        <Outlet />
+      </div>
+    </>
   );
 };
 
@@ -166,6 +155,8 @@ export const router = createBrowserRouter([
           },
         ],
       },
+
+      { path: "/tanstack", element: <TanStackQuery /> },
       { path: "*", element: <NoMatch /> },
     ],
   },

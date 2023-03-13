@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import reactLogo from "../../assets/react.svg";
@@ -51,6 +51,13 @@ export const Home = () => {
         >
           Go to ReactRouter
         </Button>
+        <Link
+          onClick={() => {
+            navigate("/tanstack");
+          }}
+        >
+          Go to ReactRouter
+        </Link>
       </Box>
     </>
   );
