@@ -17,10 +17,8 @@ import {
   ReactRouterComp,
   ReactRouterGetters,
 } from "../reactrouter/reactrouter";
-import {
-  DependentQueries,
-  TanStackQuery,
-} from "../tanstack-query/tanstack-query";
+import { DependentQueries } from "../tanstack-query/children/tanstack-concepts";
+import { TanStackQuery } from "../tanstack-query/tanstack-query";
 import { Todos, TodosBis } from "../Todos/Todos";
 
 export const Layout = () => {
