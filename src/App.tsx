@@ -7,6 +7,7 @@ import { Appbar } from "./components/shared/appbar/Appbar";
 import { Layout, router } from "./components/shared/routes";
 import { NavBar } from "./components/navbar/navbar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 function App() {
@@ -21,6 +22,7 @@ function App() {
           {/* <Appbar /> */}
           <Layout />
         </div>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );

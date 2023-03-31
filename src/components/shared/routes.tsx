@@ -17,7 +17,10 @@ import {
   ReactRouterComp,
   ReactRouterGetters,
 } from "../reactrouter/reactrouter";
-import { TanStackQuery } from "../tanstack-query/tanstack-query";
+import {
+  DependentQueries,
+  TanStackQuery,
+} from "../tanstack-query/tanstack-query";
 import { Todos, TodosBis } from "../Todos/Todos";
 
 export const Layout = () => {
@@ -101,14 +104,15 @@ export const router = createBrowserRouter([
     element: <App />, // it renders this element
     loader: async () => {
       // Fonctionne
-      return await loader("https://api.agify.io?name=Billy");
+      // return await loader("https://api.agify.io?name=Billy");
+      return "";
     }, // with this data loaded before rendering
 
     errorElement: <ErrorBoundary />, // and renders this element in case something went wrong
     children: [
       { index: true, element: <Home /> },
       {
-        path: "/todos",
+        path: "todos",
         element: <Todos />,
         // loader: async () => {
         //   // Fonctionne
@@ -118,7 +122,7 @@ export const router = createBrowserRouter([
         children: [],
       },
       {
-        path: "/reactrouter",
+        path: "reactrouter",
         element: <ReactRouterComp />,
         // loader: async () => {
         //   // Fonctionne
@@ -131,7 +135,7 @@ export const router = createBrowserRouter([
             path: "/reactrouter/getters",
             element: <ReactRouterGetters />,
             action: async ({ request, params }) => {
-              console.log(request);
+              console.log("LOLOLdoldqofslfsldgllm", request);
 
               switch (request.method) {
                 case "POST": {
@@ -156,7 +160,18 @@ export const router = createBrowserRouter([
         ],
       },
 
-      { path: "/tanstack", element: <TanStackQuery /> },
+      {
+        path: "tanstack",
+        element: <TanStackQuery />,
+        errorElement: <ErrorRRComp />,
+        children: [
+          {
+            path: "/tanstack/dependent",
+            element: <DependentQueries />,
+            errorElement: <ErrorRRComp />,
+          },
+        ],
+      },
       { path: "*", element: <NoMatch /> },
     ],
   },

@@ -11,6 +11,7 @@ import "./Todos.scss";
 import {
   Form,
   isRouteErrorResponse,
+  Outlet,
   useLoaderData,
   useNavigate,
   useRouteError,
@@ -79,9 +80,17 @@ export const Todos = () => {
             HomePage
           </Button>
           <Form method="post" action="/todos/:query">
-            <input name="songTitle" />
-            <textarea name="lyrics" />
-            <button type="submit">Save</button>
+            <List stylePosition={"initial"} styleType={"initial"}>
+              <ListItem>
+                <input name="songTitle" />
+              </ListItem>
+              <ListItem>
+                <textarea name="lyrics" />
+              </ListItem>
+              <ListItem>
+                <button type="submit">Save</button>
+              </ListItem>
+            </List>
           </Form>
           <Button
             colorScheme="teal"
@@ -92,6 +101,7 @@ export const Todos = () => {
           </Button>
         </div>
       </Container>
+      <Outlet />
     </>
   );
 };

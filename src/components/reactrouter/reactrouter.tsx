@@ -2,6 +2,7 @@ import { Button } from "@chakra-ui/react";
 import {
   Form,
   isRouteErrorResponse,
+  Link,
   Outlet,
   useNavigate,
   useRouteError,
@@ -63,7 +64,6 @@ export const ReactRouterGetters = () => {
           Get API Entries
         </Button>
       </Form>
-      ;
       <Form method="put">
         <Button
           name="btn2"
@@ -75,6 +75,10 @@ export const ReactRouterGetters = () => {
           Get A Random user
         </Button>
       </Form>
+
+      <Button colorScheme="cyan" key={"/tanstack/dependent"}>
+        <Link to="/tanstack/dependent">Test</Link>
+      </Button>
     </>
   );
 };

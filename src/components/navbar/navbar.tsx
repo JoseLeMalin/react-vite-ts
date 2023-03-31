@@ -10,7 +10,6 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
-  useDisclosure,
   useColorModeValue,
   Stack,
   useColorMode,
@@ -18,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
 
 const NavLink = ({ children }: { children: ReactNode }) => (
   <LinkCUI
@@ -37,8 +35,7 @@ const NavLink = ({ children }: { children: ReactNode }) => (
 
 export const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -49,16 +46,27 @@ export const NavBar = () => {
               <Link to="/">Home</Link>
             </Box>
             <Box key={"todos"}>
-              <Link to="/todos">Todos</Link>
+              <Link to="todos">Todos</Link>
             </Box>
             <Box key={"tanstack"}>
-              <Link to="/tanstack">Tanstack Query</Link>
+              <Link to="tanstack">Tanstack Query</Link>
             </Box>
             <Box key={"nothing-here"}>
-              <Link to="/nothing-here">Nothing Here</Link>
+              <Link to="nothing-here">Nothing Here</Link>
             </Box>
-            <Box key={"/reactrouter"}>
-              <Link to="/reactrouter">Go to ReactRouter</Link>
+            <Box key={"reactrouter"}>
+              <Link to="reactrouter">Go to ReactRouter</Link>
+            </Box>
+
+            <Box key={"tanstack/dependent"}>
+              <Link to="tanstack/dependent">Go to Dependent</Link>
+            </Box>
+          </Stack>
+          <Stack direction={"row"} spacing={10}>
+            <Box>
+              <LinkCUI href="https://chakra-ui.com/" isExternal={true}>
+                Using Chackra-UI
+              </LinkCUI>
             </Box>
           </Stack>
           <Flex alignItems={"center"}>
