@@ -51,6 +51,7 @@ export const TanStackQuery = () => {
             .get<User>(`https://jsonplaceholder.typicode.com/users/${user}`)
             .then((res) => res.data);
         },
+        refetchOnWindowFocus: false,
       };
     }),
   });
@@ -66,6 +67,7 @@ export const TanStackQuery = () => {
             )
             .then((res) => res.data);
         },
+        refetchOnWindowFocus: false,
       },
     ],
   });
@@ -156,7 +158,22 @@ export const TanStackQuery = () => {
       </Container>
       <Container>
         <Button colorScheme="cyan" key={"tanstack/dependent"}>
-          <Link to="/tanstack/dependent">Test</Link>
+          <Link to="/tanstack/dependent">Depdt Queries</Link>
+        </Button>
+
+        <Button colorScheme="red" key={"/tanstack/backfetching"}>
+          <Link to="/tanstack/backfetching">BackGround Fecthing</Link>
+        </Button>
+        <br />
+        <Button colorScheme="orange" key={"/tanstack/windowsfocus"}>
+          <Link to="/tanstack/windowsfocus">Window Focus</Link>
+        </Button>
+        <Button colorScheme="green" key={"/tanstack/lazyqueries"}>
+          <Link to="/tanstack/lazyqueries">Window Focus</Link>
+        </Button>
+        <br />
+        <Button colorScheme="cyan" key={"/tanstack/queryretries"}>
+          <Link to="/tanstack/queryretries">Query retries</Link>
         </Button>
       </Container>
       <Outlet />
@@ -164,6 +181,10 @@ export const TanStackQuery = () => {
   );
 };
 
+/**
+ *
+ * @returns
+ */
 export const LoaderTanstack = () => {
   const error = useRouteError();
 
@@ -180,11 +201,10 @@ export const LoaderTanstack = () => {
   }
 
   return (
-    <div>
+    <Container>
       <Spinner size="lg" />
-    </div>
+    </Container>
   );
-  //return <div>Loul</div>;
 };
 
 export const ErrorTanstack = () => {

@@ -17,7 +17,13 @@ import {
   ReactRouterComp,
   ReactRouterGetters,
 } from "../reactrouter/reactrouter";
-import { DependentQueries } from "../tanstack-query/children/tanstack-concepts";
+import {
+  BackFetching,
+  DependentQueries,
+  LazyQueries,
+  QueryRetries,
+  WindowFocus,
+} from "../tanstack-query/children/tanstack-concepts";
 import { TanStackQuery } from "../tanstack-query/tanstack-query";
 import { Todos, TodosBis } from "../Todos/Todos";
 
@@ -166,6 +172,26 @@ export const router = createBrowserRouter([
           {
             path: "/tanstack/dependent",
             element: <DependentQueries />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/backfetching",
+            element: <BackFetching />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/windowsfocus",
+            element: <WindowFocus />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/lazyqueries",
+            element: <LazyQueries />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/queryretries",
+            element: <QueryRetries />,
             errorElement: <ErrorRRComp />,
           },
         ],
