@@ -21,6 +21,8 @@ import {
   BackFetching,
   DependentQueries,
   LazyQueries,
+  QueryInfinite,
+  QueryPaginated,
   QueryRetries,
   WindowFocus,
 } from "../tanstack-query/children/tanstack-concepts";
@@ -192,6 +194,21 @@ export const router = createBrowserRouter([
           {
             path: "/tanstack/queryretries",
             element: <QueryRetries />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/querypaginated",
+            element: <QueryPaginated />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "/tanstack/queryinfinite",
+            element: <QueryInfinite />,
+            errorElement: <ErrorRRComp />,
+          },
+          {
+            path: "A rajouter",
+            element: <QueryPaginated />,
             errorElement: <ErrorRRComp />,
           },
         ],

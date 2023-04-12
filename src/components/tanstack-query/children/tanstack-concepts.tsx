@@ -14,12 +14,19 @@ import {
   Input,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { InputQuery, Post } from "../../../types/tanstack-models";
 import { ErrorTanstack, LoaderTanstack } from "../tanstack-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
+import { Fragment, useState } from "react";
+import {
+  ArrowBackIcon,
+  ArrowDownIcon,
+  ArrowForwardIcon,
+  ArrowLeftIcon,
+  ArrowUpIcon,
+} from "@chakra-ui/icons";
 
 export const DependentQueries = () => {
   // Simple Query
@@ -84,9 +91,9 @@ export const DependentQueries = () => {
             <Text>{inputQuery?.description}</Text>
           </CardBody>
           <CardFooter>
-            <strong>👀 {inputQuery?.subscribers_count}</strong>
-            <strong>✨ {inputQuery?.stargazers_count}</strong>
-            <strong>🍴 {inputQuery?.forks_count}</strong>
+            👀<strong> {inputQuery?.subscribers_count}</strong>✨
+            <strong> {inputQuery?.stargazers_count}</strong>
+            🍴 <strong>🍴 {inputQuery?.forks_count}</strong>
           </CardFooter>
         </Card>
         <br />
@@ -99,8 +106,7 @@ export const DependentQueries = () => {
             <Text>{post?.body}</Text>
           </CardBody>
           <CardFooter>
-            <strong>👀 {post?.userId}</strong>
-            <strong>✨ {post?.id}</strong>
+            👀 <strong> {post?.userId}</strong>✨ <strong> {post?.id}</strong>
           </CardFooter>
         </Card>
       </Container>
@@ -144,9 +150,9 @@ export const BackFetching = () => {
             <Text>{inputQuery?.description}</Text>
           </CardBody>
           <CardFooter>
-            <strong>👀 {inputQuery?.subscribers_count}</strong>
-            <strong>✨ {inputQuery?.stargazers_count}</strong>
-            <strong>🍴 {inputQuery?.forks_count}</strong>
+            👀<strong> {inputQuery?.subscribers_count}</strong>✨
+            <strong> {inputQuery?.stargazers_count}</strong>
+            🍴<strong> {inputQuery?.forks_count}</strong>
           </CardFooter>
         </Card>
       </Container>
@@ -292,52 +298,360 @@ const FormLazyQuery = ({
 };
 
 export const QueryRetries = () => {
-  const [inputTest, setInputTest] = useState("");
-  const fetchTanstackStats = async (): Promise<InputQuery> => {
+  const fetchErrorPost = async (): Promise<Post> => {
     return await axios
-      .get<InputQuery>("https://api.github.com/repos/tannerlinsley/react-query")
+      .get<Post>("https://jsonplaceholder.typicode.com/posts/-1")
       .then((res) => res.data);
   };
+
+  const fetchRetryPost = async (): Promise<Post> => {
+    return await axios
+      .get<Post>("https://jsonplaceholder.typicode.com/posts/1")
+      .then((res) => res.data);
+  };
+
   const {
-    status,
-    error,
-    data: inputQuery,
-    isFetching,
+    status: errorStatus,
+    error: errorError,
+    data: errorData,
+    isFetching: errorIsFetching,
   } = useQuery({
-    queryKey: ["getTanstackStats"],
-    queryFn: fetchTanstackStats, // <-- No () to call the functions,
-    enabled: !!inputTest,
+    queryKey: ["getRetryFalse"],
+    queryFn: fetchErrorPost, // <-- No () to call the functions,
+    retry: false,
   });
 
-  if (isFetching) {
+  const {
+    status: retryStatus,
+    error: retryError,
+    data: retryData,
+    isFetching: retryisFecthing,
+  } = useQuery({
+    queryKey: ["getRetry1"],
+    queryFn: fetchRetryPost, // <-- No () to call the functions,
+    retry: 1,
+  });
+
+  if (retryisFecthing || errorIsFetching) {
     return <LoaderTanstack />;
   }
 
-  return !inputTest ? (
-    <FormLazyQuery setInput={setInputTest} />
-  ) : (
+  return (
+    <>
+      <Container>
+        {errorError ? (
+          <Card>
+            <CardHeader>
+              <Text>
+                The query fails automatically and is never retried thanks to the
+                "retry: false" flag.
+              </Text>
+            </CardHeader>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <Text>
+                If you're seeing this, it means that there's a problem. You
+                shouldn't see that. shooosh.
+              </Text>
+            </CardHeader>
+            <CardBody>
+              <Text>{errorData?.id}</Text>
+            </CardBody>
+            <CardFooter>
+              <strong>✨ {errorData?.title}</strong>
+              <strong>👀 {errorData?.body}</strong>
+              <strong>🍴 {errorData?.userId}</strong>
+              <br />
+            </CardFooter>
+          </Card>
+        )}
+        <Card>
+          <CardHeader>
+            <Text>
+              The content of that card is filled using a query that has 2
+              retries. If it were to fail, it will retry twice to get data from
+              the API endpoint.
+            </Text>
+          </CardHeader>
+          <CardBody>
+            <Text>{retryData?.id}</Text>
+          </CardBody>
+          <CardFooter>
+            <strong>✨ {retryData?.title}</strong>
+            <strong>👀 {retryData?.body}</strong>
+            <strong>🍴 {retryData?.userId}</strong>
+            <br />
+          </CardFooter>
+        </Card>
+      </Container>
+    </>
+  );
+};
+
+export const QueryPaginated = () => {
+  const [post, setPost] = useState(0);
+
+  const fetchRetryPost = async (post: number): Promise<Post> => {
+    return await axios
+      .get<Post>(`https://jsonplaceholder.typicode.com/posts/${post}`)
+      .then((res) => res.data);
+  };
+
+  const {
+    status: postStatus,
+    error: postError,
+    data: postData,
+    isFetching: postisFecthing,
+  } = useQuery({
+    queryKey: ["getPostNb", post],
+    queryFn: () => fetchRetryPost(post), // <-- No () to call the functions,
+    keepPreviousData: true,
+    retry: false,
+    enabled: post > 0,
+  });
+
+  if (postisFecthing) {
+    return <LoaderTanstack />;
+  }
+
+  return (
     <>
       <Container>
         <Card>
           <CardHeader>
             <Text>
-              The content of that card is filled using lazy query model. By
-              clicking the button you changed the state of that component and
-              triggered a query by enabling it.
+              The content of that card changes if you click on the Previous or
+              Next button. Everytime you click, it fecthes the content of a post
+              from an API endpoint.
+              <br />
+              {post <= 0 ? null : (
+                <Text>
+                  The number <strong>{post}</strong>
+                  is the post Id you are viewing. it is used by the useState
+                  hook in this component to retrieve the post with the id (
+                  <strong>{post}</strong>)
+                  <br />✨<strong> Post Title: </strong> {postData?.title}
+                </Text>
+              )}
             </Text>
           </CardHeader>
-          <CardBody>
-            <Text>{inputQuery?.description}</Text>
-          </CardBody>
+          {post <= 0 ? (
+            <CardBody>
+              <Text>
+                If you want to display the content of a post then click the
+                right arrow
+              </Text>
+            </CardBody>
+          ) : (
+            <CardBody>
+              <Text>
+                Post id: {postData?.id}
+                <br />
+                👀 Post Body: {postData?.body}
+              </Text>
+            </CardBody>
+          )}
+
           <CardFooter>
-            <strong>👀 {inputQuery?.subscribers_count}</strong>
-            <strong>✨ {inputQuery?.stargazers_count}</strong>
-            <strong>🍴 {inputQuery?.forks_count}</strong>
+            <strong>UserId: 🍴 {postData?.userId}</strong>
             <br />
-            <Button onClick={() => setInputTest("")}>Clear query</Button>
+            <Button
+              onClick={() => setPost(post - 1)}
+              // disabled={post <= 0 ? true : false
+              isDisabled={post < 1 ? true : false}
+            >
+              <ArrowBackIcon />
+            </Button>
+            <Button
+              onClick={() => setPost(post + 1)}
+              isDisabled={post >= 10 ? true : false}
+            >
+              <ArrowForwardIcon />
+            </Button>
           </CardFooter>
         </Card>
       </Container>
+    </>
+  );
+};
+
+export const QueryInfinite = () => {
+  const [post, setPost] = useState(1);
+
+  const fetchPost = async (post: number): Promise<Post> => {
+    return await axios
+      .get<Post>(`https://jsonplaceholder.typicode.com/posts/${post}`)
+      .then((res) => res.data);
+  };
+
+  const {
+    status: postStatus,
+    isError,
+    error: postError,
+    data: postData,
+    isFetching: postisFecthing,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["getPostNb", post],
+    queryFn: () => fetchPost(post), // <-- No () to call the functions,
+    keepPreviousData: true,
+    retry: false,
+    enabled: post > 0,
+    refetchOnWindowFocus: false,
+    getNextPageParam: (lastPost, pages) => {
+      console.log("pages", pages);
+      console.log("lastPost.id", lastPost, lastPost.id);
+      return lastPost.id;
+    },
+  });
+
+  return (
+    <>
+      <Container>
+        {postStatus === "error" ? (
+          <p>Error:</p>
+        ) : (
+          <>
+            {postData?.pages.map((post, i) => (
+              <Fragment key={i}>{<p>{post.body}</p>}</Fragment>
+            ))}
+            <div>
+              <button
+                onClick={() => {
+                  setPost(post + 1);
+                  fetchNextPage();
+                }}
+                disabled={!hasNextPage || isFetchingNextPage}
+              >
+                {isFetchingNextPage
+                  ? "Loading more..."
+                  : hasNextPage
+                  ? "Load More"
+                  : "Nothing more to load"}
+              </button>
+            </div>
+            <div>
+              {postisFecthing && !isFetchingNextPage ? "Fetching..." : null}
+            </div>
+          </>
+        )}
+      </Container>
+
+      {/*postStatus === "loading" ? (
+        <LoaderTanstack />
+      ) : isError ? (
+        <ErrorTanstack />
+      ) : (
+        <Container>
+          {postData.pages.map((postItem, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Text>
+                  The content of that card changes if you click on the Previous
+                  or Next button. Everytime you click, it fecthes the content of
+                  a post from an API endpoint.
+                </Text>
+              </CardHeader>
+              <CardBody>Post Body: {postItem?.body}</CardBody>
+            </Card>
+          ))}
+          <br />
+          <Button
+            onClick={() => {
+              setPost(post - 1);
+              // fetchNextPage();
+            }}
+            // disabled={post <= 0 ? true : false
+            isDisabled={post === 1 || !hasNextPage || isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              "Loading more..."
+            ) : hasNextPage ? (
+              <ArrowLeftIcon />
+            ) : (
+              "Nothing more to load"
+            )}
+          </Button>
+
+          <Button
+            onClick={() => {
+              setPost(post + 1);
+              fetchNextPage();
+            }}
+            // disabled={post <= 0 ? true : false
+            isDisabled={!hasNextPage || isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              "Loading more..."
+            ) : hasNextPage ? (
+              <ArrowDownIcon />
+            ) : (
+              "Nothing more to load"
+            )}
+          </Button>
+
+          {/* <div>
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+            >
+              {isFetchingNextPage
+                ? "Loading more..."
+                : hasNextPage
+                ? "Load More"
+                : "Nothing more to load"}
+            </button>
+          </div> }
+          <div>
+            {postisFecthing && !isFetchingNextPage ? "Fetching..." : null}
+          </div>
+          
+          
+          
+          
+          <Button
+              onClick={() => {
+                setPost(post - 1);
+                // fetchNextPage();
+              }}
+              // disabled={post <= 0 ? true : false
+              isDisabled={!hasNextPage || isFetchingNextPage}
+            >
+              {isFetchingNextPage ? (
+                "Loading more..."
+              ) : hasNextPage ? (
+                <ArrowLeftIcon />
+              ) : (
+                "Nothing more to load"
+              )}
+            </Button>
+
+            <Button
+              onClick={() => {
+                setPost(post + 1);
+                fetchNextPage();
+              }}
+              // disabled={post <= 0 ? true : false
+              isDisabled={!hasNextPage || isFetchingNextPage}
+            >
+              {isFetchingNextPage ? (
+                "Loading more..."
+              ) : hasNextPage ? (
+                <ArrowDownIcon />
+              ) : (
+                "Nothing more to load"
+              )}
+            </Button>
+
+
+
+            
+        </Container>
+      )*/}
     </>
   );
 };

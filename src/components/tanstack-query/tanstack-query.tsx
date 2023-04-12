@@ -81,7 +81,7 @@ export const TanStackQuery = () => {
         >
           Tanstack doc
         </LinkCUI>
-        <Accordion defaultIndex={[0]} allowMultiple>
+        <Accordion allowMultiple>
           <AccordionItem key={"accordion"}>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
@@ -172,8 +172,26 @@ export const TanStackQuery = () => {
           <Link to="/tanstack/lazyqueries">Window Focus</Link>
         </Button>
         <br />
-        <Button colorScheme="cyan" key={"/tanstack/queryretries"}>
+        <Button colorScheme="yellow" key={"/tanstack/queryretries"}>
           <Link to="/tanstack/queryretries">Query retries</Link>
+        </Button>
+        <Button colorScheme="purple" key={"/tanstack/querypaginated"}>
+          <Link to="/tanstack/querypaginated">Query paginated</Link>
+        </Button>
+        <br />
+        <Button
+          colorScheme="whiteAlpha"
+          textColor={"white"}
+          key={"/tanstack/queryinfinite"}
+        >
+          <Link to="/tanstack/queryinfinite">Query Infinite</Link>
+        </Button>
+        <Button
+          colorScheme="gray"
+          textColor={"cyan"}
+          key={"/tanstack/arajouter"}
+        >
+          <Link to="/tanstack/arajouter">Query A rajouter</Link>
         </Button>
       </Container>
       <Outlet />
