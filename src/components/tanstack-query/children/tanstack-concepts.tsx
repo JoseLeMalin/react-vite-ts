@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { InputQuery, Post } from "../../../types/tanstack-models";
 import { ErrorTanstack, LoaderTanstack } from "../tanstack-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   ArrowBackIcon,
   ArrowDownIcon,
@@ -478,13 +478,18 @@ export const QueryPaginated = () => {
 };
 
 export const QueryInfinite = () => {
-  const [post, setPost] = useState(1);
+  const postsArray = useRef<Post[]>([]);
+  const totalNbPosts = useRef(postsArray.current.length);
 
-  const fetchPost = async (post: number): Promise<Post> => {
+  const fetchPost = async ({ pageParam = totalNbPosts.current }) => {
     return await axios
-      .get<Post>(`https://jsonplaceholder.typicode.com/posts/${post}`)
+      .get<Post>(`https://jsonplaceholder.typicode.com/posts/${pageParam + 1}`)
       .then((res) => res.data);
   };
+
+  useEffect(() => {
+    totalNbPosts.current = postsArray.current.length;
+  }, [postsArray]);
 
   const {
     status: postStatus,
@@ -496,53 +501,38 @@ export const QueryInfinite = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["getPostNb", post],
-    queryFn: () => fetchPost(post), // <-- No () to call the functions,
+    queryKey: ["getPostNb"],
+    queryFn: fetchPost, // <-- No () to call the functions,
+    enabled: totalNbPosts.current > 0,
     keepPreviousData: true,
     retry: false,
-    enabled: post > 0,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPost, pages) => {
-      console.log("pages", pages);
-      console.log("lastPost.id", lastPost, lastPost.id);
+      postsArray.current = pages;
       return lastPost.id;
     },
   });
 
   return (
     <>
-      <Container>
-        {postStatus === "error" ? (
-          <p>Error:</p>
-        ) : (
-          <>
-            {postData?.pages.map((post, i) => (
-              <Fragment key={i}>{<p>{post.body}</p>}</Fragment>
-            ))}
-            <div>
-              <button
-                onClick={() => {
-                  setPost(post + 1);
-                  fetchNextPage();
-                }}
-                disabled={!hasNextPage || isFetchingNextPage}
-              >
-                {isFetchingNextPage
-                  ? "Loading more..."
-                  : hasNextPage
-                  ? "Load More"
-                  : "Nothing more to load"}
-              </button>
-            </div>
-            <div>
-              {postisFecthing && !isFetchingNextPage ? "Fetching..." : null}
-            </div>
-          </>
-        )}
-      </Container>
-
-      {/*postStatus === "loading" ? (
-        <LoaderTanstack />
+      {postStatus === "loading" ? (
+        <>
+          <LoaderTanstack />
+          <Button
+            onClick={() => {
+              //setPost(post + 1);
+              fetchNextPage();
+            }}
+          >
+            {isFetchingNextPage ? (
+              "Loading more..."
+            ) : hasNextPage ? (
+              <ArrowDownIcon />
+            ) : (
+              "Nothing more to load"
+            )}
+          </Button>
+        </>
       ) : isError ? (
         <ErrorTanstack />
       ) : (
@@ -560,13 +550,13 @@ export const QueryInfinite = () => {
             </Card>
           ))}
           <br />
+
           <Button
             onClick={() => {
-              setPost(post - 1);
-              // fetchNextPage();
+              postsArray.current.pop();
             }}
             // disabled={post <= 0 ? true : false
-            isDisabled={post === 1 || !hasNextPage || isFetchingNextPage}
+            isDisabled={!hasNextPage || isFetchingNextPage}
           >
             {isFetchingNextPage ? (
               "Loading more..."
@@ -579,7 +569,7 @@ export const QueryInfinite = () => {
 
           <Button
             onClick={() => {
-              setPost(post + 1);
+              //setPost(post + 1);
               fetchNextPage();
             }}
             // disabled={post <= 0 ? true : false
@@ -593,65 +583,8 @@ export const QueryInfinite = () => {
               "Nothing more to load"
             )}
           </Button>
-
-          {/* <div>
-            <button
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
-            >
-              {isFetchingNextPage
-                ? "Loading more..."
-                : hasNextPage
-                ? "Load More"
-                : "Nothing more to load"}
-            </button>
-          </div> }
-          <div>
-            {postisFecthing && !isFetchingNextPage ? "Fetching..." : null}
-          </div>
-          
-          
-          
-          
-          <Button
-              onClick={() => {
-                setPost(post - 1);
-                // fetchNextPage();
-              }}
-              // disabled={post <= 0 ? true : false
-              isDisabled={!hasNextPage || isFetchingNextPage}
-            >
-              {isFetchingNextPage ? (
-                "Loading more..."
-              ) : hasNextPage ? (
-                <ArrowLeftIcon />
-              ) : (
-                "Nothing more to load"
-              )}
-            </Button>
-
-            <Button
-              onClick={() => {
-                setPost(post + 1);
-                fetchNextPage();
-              }}
-              // disabled={post <= 0 ? true : false
-              isDisabled={!hasNextPage || isFetchingNextPage}
-            >
-              {isFetchingNextPage ? (
-                "Loading more..."
-              ) : hasNextPage ? (
-                <ArrowDownIcon />
-              ) : (
-                "Nothing more to load"
-              )}
-            </Button>
-
-
-
-            
         </Container>
-      )*/}
+      )}
     </>
   );
 };
