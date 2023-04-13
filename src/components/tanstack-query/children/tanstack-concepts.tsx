@@ -477,19 +477,16 @@ export const QueryPaginated = () => {
   );
 };
 
+/**
+ * Simple example of infinite query. Doesn't seem easy to use with React hooks as it would rerender everything a lot of times.
+ * @returns
+ */
 export const QueryInfinite = () => {
-  const postsArray = useRef<Post[]>([]);
-  const totalNbPosts = useRef(postsArray.current.length);
-
-  const fetchPost = async ({ pageParam = totalNbPosts.current }) => {
+  const fetchPost = async ({ pageParam = 0 }) => {
     return await axios
       .get<Post>(`https://jsonplaceholder.typicode.com/posts/${pageParam + 1}`)
       .then((res) => res.data);
   };
-
-  useEffect(() => {
-    totalNbPosts.current = postsArray.current.length;
-  }, [postsArray]);
 
   const {
     status: postStatus,
@@ -500,79 +497,45 @@ export const QueryInfinite = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["getPostNb"],
     queryFn: fetchPost, // <-- No () to call the functions,
-    enabled: totalNbPosts.current > 0,
     keepPreviousData: true,
     retry: false,
     refetchOnWindowFocus: false,
-    getNextPageParam: (lastPost, pages) => {
-      postsArray.current = pages;
-      return lastPost.id;
-    },
+    getPreviousPageParam: (firstPage, allpages) => firstPage.id,
+    getNextPageParam: (lastPost, pages) => lastPost.id,
   });
 
   return (
     <>
       {postStatus === "loading" ? (
-        <>
-          <LoaderTanstack />
-          <Button
-            onClick={() => {
-              //setPost(post + 1);
-              fetchNextPage();
-            }}
-          >
-            {isFetchingNextPage ? (
-              "Loading more..."
-            ) : hasNextPage ? (
-              <ArrowDownIcon />
-            ) : (
-              "Nothing more to load"
-            )}
-          </Button>
-        </>
+        <LoaderTanstack />
       ) : isError ? (
         <ErrorTanstack />
       ) : (
         <Container>
-          {postData.pages.map((postItem, i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Text>
-                  The content of that card changes if you click on the Previous
-                  or Next button. Everytime you click, it fecthes the content of
-                  a post from an API endpoint.
-                </Text>
-              </CardHeader>
-              <CardBody>Post Body: {postItem?.body}</CardBody>
-            </Card>
-          ))}
+          {
+            /*postData.pages.map((postItem, i) => (*/
+            postData.pages.map((postItem, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Text>
+                    The content of that card changes if you click on the
+                    Previous or Next button. Everytime you click, it fecthes the
+                    content of a post from an API endpoint.
+                  </Text>
+                </CardHeader>
+                <CardBody>Post Body: {postItem?.body}</CardBody>
+              </Card>
+            ))
+          }
           <br />
-
           <Button
             onClick={() => {
-              postsArray.current.pop();
-            }}
-            // disabled={post <= 0 ? true : false
-            isDisabled={!hasNextPage || isFetchingNextPage}
-          >
-            {isFetchingNextPage ? (
-              "Loading more..."
-            ) : hasNextPage ? (
-              <ArrowLeftIcon />
-            ) : (
-              "Nothing more to load"
-            )}
-          </Button>
-
-          <Button
-            onClick={() => {
-              //setPost(post + 1);
               fetchNextPage();
             }}
-            // disabled={post <= 0 ? true : false
             isDisabled={!hasNextPage || isFetchingNextPage}
           >
             {isFetchingNextPage ? (
@@ -582,6 +545,24 @@ export const QueryInfinite = () => {
             ) : (
               "Nothing more to load"
             )}
+          </Button>
+
+          <br />
+          <Button
+            onClick={() => {
+              refetch<Post>({
+                refetchPage: (lastPage, index) => index === 0,
+              });
+            }}
+          >
+            Refecth of page 1
+          </Button>
+          <Button
+            onClick={() => {
+              fetchNextPage({ pageParam: 4 });
+            }}
+          >
+            Get the 5th Post
           </Button>
         </Container>
       )}
