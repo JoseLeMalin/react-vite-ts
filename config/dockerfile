@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /app
+COPY package.json .
+COPY vite.config.ts .
+COPY tsconfig.json .
+
+RUN yarn install
+
+COPY public ./public/
+COPY src ./src/
+
+EXPOSE 3000:3000
+
+CMD ["yarn", "start"]
