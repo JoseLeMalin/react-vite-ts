@@ -82,7 +82,7 @@ export const DependentQueries = () => {
   return (
     <>
       <Container>
-        Ceci est la requête originale
+        This is the Original Request
         <Card>
           <CardHeader>
             <h1>{inputQuery?.name.toUpperCase()}</h1>
@@ -97,7 +97,7 @@ export const DependentQueries = () => {
           </CardFooter>
         </Card>
         <br />
-        <h2>Ceci est la dependente</h2>
+        <h2>This is the Dependent Request</h2>
         <Card>
           <CardHeader>
             <h1>{post?.title.toUpperCase()}</h1>
@@ -183,7 +183,7 @@ export const WindowFocus = () => {
     <>
       <Container>
         <Text>
-          This content of that card is being refreshed everytime you go back to
+          The content of that card is being refreshed everytime you go back to
           this card
         </Text>
         <Card>

@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   Stack,
   useColorMode,
+  Image,
   Center,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
@@ -39,9 +40,18 @@ export const NavBar = () => {
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        <Flex h={16} justifyContent={"space-between"} alignItems={"center"}>
           <Stack direction={"row"} spacing={4}>
-            <Box>Logo</Box>
+            <Box>
+              <Image
+                objectFit="cover"
+                fit={"contain"}
+                boxSizing="border-box"
+                boxSize={"51"}
+                src="src\assets\20230607_111722.jpg"
+                alt="Logo Brooklyn Tag"
+              />
+            </Box>
             <Box key={"home"}>
               <Link to="/">Home</Link>
             </Box>
@@ -56,10 +66,6 @@ export const NavBar = () => {
             </Box>
             <Box key={"reactrouter"}>
               <Link to="reactrouter">Go to ReactRouter</Link>
-            </Box>
-
-            <Box key={"tanstack/dependent"}>
-              <Link to="tanstack/dependent">Go to Dependent</Link>
             </Box>
           </Stack>
           <Stack direction={"row"} spacing={10}>
