@@ -59,6 +59,18 @@ export const Home = () => {
           Go to ReactRouter
         </Link>
       </Box>
+      <Box>
+        <Button
+          loadingText={""}
+          size={"md"}
+          variant={"solid"}
+          onClick={() => {
+            navigate("/movies");
+          }}
+        >
+          Go to Movies
+        </Button>
+      </Box>
     </>
   );
 };

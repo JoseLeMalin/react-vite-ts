@@ -27,7 +27,8 @@ import {
   WindowFocus,
 } from "../tanstack-query/children/tanstack-concepts";
 import { TanStackQuery } from "../tanstack-query/tanstack-query";
-import { Todos, TodosBis } from "../Todos/Todos";
+import { Todos } from "../Todos/Todos";
+import { MoviesHome } from "../movies/moviesHome";
 
 export const Layout = () => {
   return (
@@ -165,7 +166,16 @@ export const router = createBrowserRouter([
           },
         ],
       },
-
+      {
+        path: "movies",
+        element: <MoviesHome />,
+        // loader: async () => {
+        //   // Fonctionne
+        //   // return await loader("https://api.agify.io?name=Sebastien");
+        // },
+        errorElement: <ErrorRRComp />,
+        // https://jsonplaceholder.typicode.com/
+      },
       {
         path: "tanstack",
         element: <TanStackQuery />,
